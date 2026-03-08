@@ -35,7 +35,7 @@ export const episodes: Episode[] = [
     appleUrl: "https://podcasts.apple.com/us/podcast/usa-n-sensuuri-palestiina-ja-gaza-yksin%C3%A4isyys-ja-teko%C3%A4ly/id1774063928?i=1000728409532",
   },
   {
-    id: 4,
+    id: 1000727358893,
     title: "Miten Wolt sai alkunsa? Pt. 2",
     date: "18.09.2025",
     duration: "1h 48min",
