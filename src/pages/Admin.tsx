@@ -30,7 +30,7 @@ import { Link } from "react-router-dom";
 export default function Admin() {
   const [content, setContent] = useState<PodcastContent>(() => loadContent());
   const [expandedEpisode, setExpandedEpisode] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<"hero" | "episodes" | "links" | "footer">("hero");
+  const [activeTab, setActiveTab] = useState<"hero" | "episodes" | "links" | "footer" | "sponsors">("hero");
   const importRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
