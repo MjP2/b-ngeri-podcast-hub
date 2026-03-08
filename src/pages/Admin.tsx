@@ -35,6 +35,7 @@ export default function Admin() {
   const importRef = useRef<HTMLInputElement>(null);
   const [isPublishing, setIsPublishing] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [commitMessage, setCommitMessage] = useState("");
 
   // Fetch episodes.json and merge with CMS content on mount
   useEffect(() => {
