@@ -18,35 +18,51 @@ const FormFlowEmbed = ({ formId }: FormFlowEmbedProps) => {
   useEffect(() => {
     if (!open) return;
 
+    let closeTimer: ReturnType<typeof setTimeout>;
+    let observer: MutationObserver;
+    let initialChildCount = -1;
+
     const timer = setTimeout(() => {
       document.querySelectorAll('script[src*="myformflow.io"]').forEach((s) => s.remove());
 
       const script = document.createElement("script");
       script.src = "https://myformflow.io/embed/widget.js";
       script.async = true;
+
+      script.onload = () => {
+        // Wait a bit for the widget to render, then start watching
+        setTimeout(() => {
+          const container = document.getElementById("formflow-embed");
+          if (!container) return;
+
+          // Record initial state after form renders
+          initialChildCount = container.querySelectorAll("input, textarea, select, button").length;
+
+          observer = new MutationObserver(() => {
+            const html = container.innerHTML.toLowerCase();
+            const currentFormElements = container.querySelectorAll("input, textarea, select, button").length;
+
+            // Detect submission: form elements disappear OR thank-you text appears
+            const hasThankYou = html.includes("thank") || html.includes("kiitos") || html.includes("submitted") || html.includes("success");
+            const formDisappeared = initialChildCount > 0 && currentFormElements === 0;
+
+            if (hasThankYou || formDisappeared) {
+              closeTimer = setTimeout(() => setOpen(false), 1000);
+              observer.disconnect();
+            }
+          });
+
+          observer.observe(container, { childList: true, subtree: true, characterData: true, attributes: true });
+        }, 1000);
+      };
+
       document.body.appendChild(script);
     }, 50);
-
-    // Watch for thank-you page and auto-close after 1s
-    const container = document.getElementById("formflow-embed");
-    let closeTimer: ReturnType<typeof setTimeout>;
-    const observer = new MutationObserver(() => {
-      if (!container) return;
-      // Detect thank-you state: look for common patterns (text content change, form disappearing)
-      const html = container.innerHTML.toLowerCase();
-      if (html.includes("thank") || html.includes("kiitos") || html.includes("submitted")) {
-        closeTimer = setTimeout(() => setOpen(false), 1000);
-      }
-    });
-
-    if (container) {
-      observer.observe(container, { childList: true, subtree: true, characterData: true });
-    }
 
     return () => {
       clearTimeout(timer);
       clearTimeout(closeTimer);
-      observer.disconnect();
+      observer?.disconnect();
     };
   }, [open, formKey]);
 
