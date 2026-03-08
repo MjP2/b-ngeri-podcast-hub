@@ -58,6 +58,18 @@ const Index = () => {
         mergedById.set(ep.id, ep);
       }
 
+      // Also overlay localStorage admin edits (poems etc.)
+      const localEpisodes = localContent.episodes;
+      const localMap = new Map(localEpisodes.map((e: Episode) => [e.id, e]));
+      for (const [id, localEp] of localMap) {
+        const existing = mergedById.get(id);
+        if (existing) {
+          mergedById.set(id, { ...existing, ...localEp });
+        } else {
+          mergedById.set(id, localEp);
+        }
+      }
+
       const merged = Array.from(mergedById.values());
       if (merged.length > 0) setEpisodes(merged);
 
