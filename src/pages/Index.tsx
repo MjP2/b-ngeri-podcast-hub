@@ -49,12 +49,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Full-width Hero Image */}
-      <div className="relative w-full">
+      {/* Full-width Hero Image with Parallax */}
+      <div ref={heroRef} className="relative w-full overflow-hidden">
         <img
           src={hero.imageUrl || heroImage}
           alt="Bängeri Podcast"
           className="w-full object-cover"
+          style={{ transform: `translateY(${scrollY * 0.3}px)` }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
       </div>
