@@ -17,6 +17,7 @@ import {
 import { toast } from "sonner";
 import {
   PodcastContent,
+  Sponsor,
   loadContent,
   saveContent,
   exportContentJson,
