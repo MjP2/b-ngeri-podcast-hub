@@ -11,6 +11,7 @@ export interface PodcastContent {
     title: string;
     subtitle: string;
     description: string;
+    imageUrl: string;
   };
   episodes: Episode[];
   links: {
