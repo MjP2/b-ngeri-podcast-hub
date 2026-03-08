@@ -47,11 +47,15 @@ export function defaultContent(): PodcastContent {
 }
 
 export function loadContent(): PodcastContent {
+  const defaults = defaultContent();
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return { ...defaults, ...parsed };
+    }
   } catch {}
-  return defaultContent();
+  return defaults;
 }
 
 export function saveContent(content: PodcastContent) {
