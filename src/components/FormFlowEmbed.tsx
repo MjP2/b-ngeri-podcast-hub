@@ -7,7 +7,13 @@ interface FormFlowEmbedProps {
 
 const FormFlowEmbed = ({ formId }: FormFlowEmbedProps) => {
   const [open, setOpen] = useState(false);
+  const [formKey, setFormKey] = useState(0);
   const scriptLoaded = useRef(false);
+
+  const handleOpen = () => {
+    setFormKey((k) => k + 1); // Force remount to reset form
+    setOpen(true);
+  };
 
   useEffect(() => {
     if (open && !scriptLoaded.current) {
@@ -17,7 +23,11 @@ const FormFlowEmbed = ({ formId }: FormFlowEmbedProps) => {
       script.async = true;
       document.body.appendChild(script);
     }
-  }, [open]);
+    // Re-initialize widget when form remounts
+    if (open && scriptLoaded.current && (window as any).FormFlowWidget) {
+      setTimeout(() => (window as any).FormFlowWidget.init(), 100);
+    }
+  }, [open, formKey]);
 
   // Lock body scroll when modal is open
   useEffect(() => {
@@ -32,7 +42,7 @@ const FormFlowEmbed = ({ formId }: FormFlowEmbedProps) => {
   return (
     <>
       <button
-        onClick={() => setOpen(true)}
+        onClick={handleOpen}
         className="group flex items-center gap-2 rounded-xl border border-border bg-card px-5 py-4 text-left transition-all duration-200 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 hover-scale"
       >
         <MessageSquare className="h-4 w-4 text-primary" />
@@ -74,7 +84,7 @@ const FormFlowEmbed = ({ formId }: FormFlowEmbedProps) => {
 
           {/* Form content */}
           <div className="p-5 max-h-[70vh] overflow-y-auto">
-            <div id="formflow-embed" data-form-id={formId} />
+            <div key={formKey} id="formflow-embed" data-form-id={formId} />
           </div>
         </div>
       </div>
