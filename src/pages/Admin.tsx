@@ -34,6 +34,55 @@ export default function Admin() {
   const [activeTab, setActiveTab] = useState<"hero" | "episodes" | "links" | "footer" | "sponsors" | "settings">("hero");
   const importRef = useRef<HTMLInputElement>(null);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  // Fetch episodes.json and merge with CMS content on mount
+  useEffect(() => {
+    const base = import.meta.env.BASE_URL;
+    Promise.allSettled([
+      fetch(`${base}content.json`).then(r => r.ok ? r.json() : null),
+      fetch(`${base}episodes.json`).then(r => r.ok ? r.json() : null),
+    ]).then(([contentResult, episodesResult]) => {
+      const cmsEpisodes: Episode[] =
+        contentResult.status === "fulfilled" && contentResult.value?.episodes
+          ? contentResult.value.episodes
+          : [];
+
+      const fetchedEpisodes: Episode[] =
+        episodesResult.status === "fulfilled" && episodesResult.value
+          ? episodesResult.value
+          : [];
+
+      // Merge: fetched as base, overlay CMS data (poems etc.)
+      const cmsMap = new Map(cmsEpisodes.map((e: Episode) => [e.id, e]));
+      const mergedById = new Map<number, Episode>();
+
+      for (const ep of fetchedEpisodes) {
+        const cmsEp = cmsMap.get(ep.id);
+        mergedById.set(ep.id, cmsEp ? { ...ep, ...cmsEp } : ep);
+        cmsMap.delete(ep.id);
+      }
+      for (const [, ep] of cmsMap) {
+        mergedById.set(ep.id, ep);
+      }
+
+      const merged = Array.from(mergedById.values());
+      if (merged.length > 0) {
+        setContent(prev => ({ ...prev, episodes: merged }));
+      }
+
+      if (contentResult.status === "fulfilled" && contentResult.value) {
+        setContent(prev => ({
+          ...prev,
+          hero: { ...prev.hero, ...contentResult.value.hero },
+          links: { ...prev.links, ...contentResult.value.links },
+          footer: { ...prev.footer, ...contentResult.value.footer },
+          sponsors: contentResult.value.sponsors || prev.sponsors,
+        }));
+      }
+      setLoaded(true);
+    });
+  }, []);
 
   // GitHub settings stored in localStorage
   const [ghOwner, setGhOwner] = useState(() => localStorage.getItem("gh_owner") || "");
