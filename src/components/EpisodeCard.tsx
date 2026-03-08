@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Episode } from "@/lib/episodes";
 import { Clock, Calendar, ChevronDown } from "lucide-react";
 
