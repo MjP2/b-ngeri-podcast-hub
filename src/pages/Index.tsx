@@ -5,7 +5,7 @@ import PlatformLinks from "@/components/PlatformLinks";
 
 const Index = () => {
   const content = loadContent();
-  const { hero, episodes, links, footer } = content;
+  const { hero, episodes, links, footer, sponsors } = content;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -51,8 +51,32 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border py-8">
-        <div className="container mx-auto flex flex-col items-center gap-4 px-4 text-sm text-muted-foreground sm:flex-row sm:justify-between">
+      <footer className="border-t border-border">
+        {sponsors && sponsors.length > 0 && (
+          <div className="container mx-auto px-4 py-8">
+            <p className="mb-4 text-center text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Sponsorit
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-8">
+              {sponsors.map((sponsor) => (
+                <a
+                  key={sponsor.id}
+                  href={sponsor.linkUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="opacity-60 grayscale transition-all hover:opacity-100 hover:grayscale-0"
+                >
+                  <img
+                    src={sponsor.imageUrl}
+                    alt="Sponsori"
+                    className="h-8 max-w-[120px] object-contain md:h-10 md:max-w-[150px]"
+                  />
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+        <div className="container mx-auto flex flex-col items-center gap-4 px-4 py-6 text-sm text-muted-foreground sm:flex-row sm:justify-between">
           <p>{footer.copyright}</p>
           <div className="flex items-center gap-4">
             {links.instagram && (

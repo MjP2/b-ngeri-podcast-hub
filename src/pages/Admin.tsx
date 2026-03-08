@@ -17,6 +17,7 @@ import {
 import { toast } from "sonner";
 import {
   PodcastContent,
+  Sponsor,
   loadContent,
   saveContent,
   exportContentJson,
@@ -29,7 +30,7 @@ import { Link } from "react-router-dom";
 export default function Admin() {
   const [content, setContent] = useState<PodcastContent>(() => loadContent());
   const [expandedEpisode, setExpandedEpisode] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<"hero" | "episodes" | "links" | "footer">("hero");
+  const [activeTab, setActiveTab] = useState<"hero" | "episodes" | "links" | "footer" | "sponsors">("hero");
   const importRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -119,10 +120,33 @@ export default function Admin() {
     e.target.value = "";
   };
 
+  const addSponsor = () => {
+    const newSponsor: Sponsor = {
+      id: content.sponsors.length > 0 ? Math.max(...content.sponsors.map((s) => s.id)) + 1 : 1,
+      imageUrl: "",
+      linkUrl: "",
+    };
+    setContent((prev) => ({ ...prev, sponsors: [...prev.sponsors, newSponsor] }));
+    toast.success("Sponsori lisätty");
+  };
+
+  const updateSponsor = (id: number, field: string, value: string) => {
+    setContent((prev) => ({
+      ...prev,
+      sponsors: prev.sponsors.map((s) => (s.id === id ? { ...s, [field]: value } : s)),
+    }));
+  };
+
+  const removeSponsor = (id: number) => {
+    setContent((prev) => ({ ...prev, sponsors: prev.sponsors.filter((s) => s.id !== id) }));
+    toast.info("Sponsori poistettu");
+  };
+
   const tabs = [
     { key: "hero" as const, label: "Hero" },
     { key: "episodes" as const, label: `Jaksot (${content.episodes.length})` },
     { key: "links" as const, label: "Linkit" },
+    { key: "sponsors" as const, label: `Sponsorit (${content.sponsors.length})` },
     { key: "footer" as const, label: "Footer" },
   ];
 
@@ -240,6 +264,37 @@ export default function Admin() {
             <FieldInput label="Pocket Casts" value={content.links.pocketcasts} onChange={(v) => updateLinks("pocketcasts", v)} />
             <FieldInput label="Instagram" value={content.links.instagram} onChange={(v) => updateLinks("instagram", v)} />
             <FieldInput label="TikTok" value={content.links.tiktok} onChange={(v) => updateLinks("tiktok", v)} />
+          </div>
+        )}
+
+        {/* Sponsors editor */}
+        {activeTab === "sponsors" && (
+          <div className="space-y-3">
+            <Button onClick={addSponsor} className="gap-2 w-full">
+              <Plus size={16} /> Lisää sponsori
+            </Button>
+            {content.sponsors.map((sponsor, i) => (
+              <div key={sponsor.id} className="rounded-xl border border-border bg-card p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-display text-sm font-bold text-primary">Sponsori #{i + 1}</span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 text-destructive hover:text-destructive"
+                    onClick={() => removeSponsor(sponsor.id)}
+                  >
+                    <Trash2 size={14} />
+                  </Button>
+                </div>
+                <FieldInput label="Logo URL (kuva)" value={sponsor.imageUrl} onChange={(v) => updateSponsor(sponsor.id, "imageUrl", v)} placeholder="https://..." />
+                <FieldInput label="Linkki URL" value={sponsor.linkUrl} onChange={(v) => updateSponsor(sponsor.id, "linkUrl", v)} placeholder="https://..." />
+                {sponsor.imageUrl && (
+                  <div className="rounded-lg bg-secondary/50 p-3 flex items-center justify-center">
+                    <img src={sponsor.imageUrl} alt={`Sponsori ${i + 1}`} className="max-h-12 object-contain" />
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         )}
 
