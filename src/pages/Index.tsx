@@ -69,14 +69,20 @@ const Index = () => {
           const existing = mergedById.get(id);
           if (existing) {
             mergedById.set(id, { ...existing, ...localEp });
-          } else {
-            mergedById.set(id, localEp);
           }
+          // Don't add localStorage-only episodes — they're stale duplicates
         }
       }
 
-      const merged = Array.from(mergedById.values());
-      if (merged.length > 0) setEpisodes(merged);
+      // Deduplicate by id and sort newest first
+      const deduped = Array.from(mergedById.values());
+      deduped.sort((a, b) => {
+        // Parse dd.mm.yyyy dates for sorting
+        const [ad, am, ay] = a.date.split('.').map(Number);
+        const [bd, bm, by] = b.date.split('.').map(Number);
+        return (by * 10000 + bm * 100 + bd) - (ay * 10000 + am * 100 + ad);
+      });
+      if (deduped.length > 0) setEpisodes(deduped);
 
       if (contentResult.status === "fulfilled" && contentResult.value) {
         setContent(prev => ({ ...prev, ...contentResult.value }));
