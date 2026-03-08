@@ -35,6 +35,7 @@ export default function Admin() {
   const importRef = useRef<HTMLInputElement>(null);
   const [isPublishing, setIsPublishing] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [commitMessage, setCommitMessage] = useState("");
 
   // Fetch episodes.json and merge with CMS content on mount
   useEffect(() => {
@@ -130,7 +131,7 @@ export default function Admin() {
           method: "PUT",
           headers: { ...ghHeaders, "Content-Type": "application/json" },
           body: JSON.stringify({
-            message: "chore: update content from admin",
+            message: commitMessage.trim() || "chore: update content from admin",
             content: btoa(unescape(encodeURIComponent(contentJson))),
             ...(sha ? { sha } : {}),
           }),
@@ -302,10 +303,18 @@ export default function Admin() {
             <Button variant="outline" size="sm" className="gap-2" onClick={() => importRef.current?.click()}>
               <Upload size={14} /> Import
             </Button>
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+              <Input
+                value={commitMessage}
+                onChange={(e) => setCommitMessage(e.target.value)}
+                placeholder="Vapaaehtoinen viesti (commit message)..."
+                className="text-sm h-9"
+              />
+            </div>
             <Button
               size="sm"
               className="gap-2"
-              onClick={handlePublish}
+              onClick={() => { handlePublish(); setCommitMessage(""); }}
               disabled={isPublishing}
             >
               <Rocket size={14} /> {isPublishing ? "Julkaistaan..." : "Julkaise"}
