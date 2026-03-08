@@ -41,9 +41,16 @@ const EpisodeCard = ({ episode, index }: EpisodeCardProps) => {
             </span>
           </div>
           {expanded && (
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              {episode.description}
-            </p>
+            <div className="mt-3 space-y-2">
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {episode.description}
+              </p>
+              {episode.poem && (
+                <p className="text-sm italic leading-relaxed text-muted-foreground/80 whitespace-pre-line">
+                  {episode.poem}
+                </p>
+              )}
+            </div>
           )}
         </div>
         <ChevronDown
