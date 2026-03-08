@@ -304,10 +304,18 @@ export default function Admin() {
             <Button variant="outline" size="sm" className="gap-2" onClick={() => importRef.current?.click()}>
               <Upload size={14} /> Import
             </Button>
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+              <Input
+                value={commitMessage}
+                onChange={(e) => setCommitMessage(e.target.value)}
+                placeholder="Vapaaehtoinen viesti (commit message)..."
+                className="text-sm h-9"
+              />
+            </div>
             <Button
               size="sm"
               className="gap-2"
-              onClick={handlePublish}
+              onClick={() => { handlePublish(); setCommitMessage(""); }}
               disabled={isPublishing}
             >
               <Rocket size={14} /> {isPublishing ? "Julkaistaan..." : "Julkaise"}
