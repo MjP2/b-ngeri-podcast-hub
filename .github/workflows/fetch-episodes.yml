@@ -2,8 +2,8 @@ name: Fetch Podcast Episodes
 
 on:
   schedule:
-    - cron: '0 */6 * * *' # Every 6 hours
-  workflow_dispatch: # Allow manual trigger
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
 
 jobs:
   fetch-episodes:
@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Fetch episodes from iTunes API
+      - name: Fetch and merge episodes
         run: |
           curl -s "https://itunes.apple.com/lookup?id=1774063928&media=podcast&entity=podcastEpisode&limit=200" \
             -o /tmp/itunes-raw.json
@@ -23,27 +23,47 @@ jobs:
           node -e "
           const fs = require('fs');
           const raw = JSON.parse(fs.readFileSync('/tmp/itunes-raw.json', 'utf8'));
-          
-          const episodes = raw.results
+
+          // Load admin overrides if content.json exists
+          let overrides = {};
+          let contentData = null;
+          try {
+            contentData = JSON.parse(fs.readFileSync('public/content.json', 'utf8'));
+            // Build override map keyed by episode id
+            if (contentData.episodes) {
+              contentData.episodes.forEach(ep => {
+                overrides[ep.id] = ep;
+              });
+            }
+          } catch {}
+
+          // Load existing episodes.json to preserve manual edits
+          let existingEpisodes = {};
+          try {
+            const existing = JSON.parse(fs.readFileSync('public/episodes.json', 'utf8'));
+            existing.forEach(ep => { existingEpisodes[ep.id] = ep; });
+          } catch {}
+
+          // Parse iTunes episodes
+          const itunesEpisodes = raw.results
             .filter(r => r.wrapperType === 'podcastEpisode')
             .sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate))
-            .map((ep, i) => {
+            .map((ep) => {
               const ms = ep.trackTimeMillis || 0;
               const totalMin = Math.round(ms / 60000);
               const hours = Math.floor(totalMin / 60);
               const mins = totalMin % 60;
               const duration = hours > 0 ? hours + 'h ' + mins + 'min' : mins + ' min';
-              
+
               const date = new Date(ep.releaseDate);
               const dd = String(date.getDate()).padStart(2, '0');
               const mm = String(date.getMonth() + 1).padStart(2, '0');
               const yyyy = date.getFullYear();
-              
-              // Clean description: remove social media links at the end
+
               let desc = (ep.description || '').replace(/\\\\n/g, ' ').replace(/\s+/g, ' ').trim();
               desc = desc.replace(/\s*Bängeri TikTok:.*$/i, '');
               desc = desc.replace(/\s*Muista myös tilata kanava.*$/i, '');
-              
+
               return {
                 id: ep.trackId,
                 title: ep.trackName,
@@ -54,8 +74,32 @@ jobs:
               };
             });
 
-          fs.writeFileSync('public/episodes.json', JSON.stringify(episodes, null, 2));
-          console.log('Wrote ' + episodes.length + ' episodes');
+          // Merge: admin overrides > existing edits > iTunes data
+          const merged = itunesEpisodes.map(itEp => {
+            if (overrides[itEp.id]) {
+              // Admin has edited this episode — use admin version
+              return { ...itEp, ...overrides[itEp.id] };
+            }
+            if (existingEpisodes[itEp.id]) {
+              // Previously saved edits — preserve them
+              return existingEpisodes[itEp.id];
+            }
+            // Brand new from iTunes
+            return itEp;
+          });
+
+          // Also include any manually-added episodes from admin (not in iTunes)
+          const itunesIds = new Set(itunesEpisodes.map(e => e.id));
+          if (contentData && contentData.episodes) {
+            contentData.episodes.forEach(ep => {
+              if (!itunesIds.has(ep.id)) {
+                merged.push(ep);
+              }
+            });
+          }
+
+          fs.writeFileSync('public/episodes.json', JSON.stringify(merged, null, 2));
+          console.log('Wrote ' + merged.length + ' episodes (' + itunesEpisodes.length + ' from iTunes)');
           "
 
       - name: Commit if changed

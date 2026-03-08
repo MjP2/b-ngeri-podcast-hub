@@ -54,25 +54,60 @@ export default function Admin() {
     }
     setIsPublishing(true);
     try {
-      const res = await fetch(
+      // 1. Build content.json from current admin state
+      const contentJson = JSON.stringify(content, null, 2);
+
+      // 2. Get current file SHA (if exists) for update
+      const ghHeaders = {
+        Authorization: `Bearer ${ghToken}`,
+        Accept: "application/vnd.github.v3+json",
+      };
+      let sha: string | undefined;
+      try {
+        const existing = await fetch(
+          `https://api.github.com/repos/${ghOwner}/${ghRepo}/contents/public/content.json`,
+          { headers: ghHeaders }
+        );
+        if (existing.ok) {
+          const data = await existing.json();
+          sha = data.sha;
+        }
+      } catch {}
+
+      // 3. Commit content.json to GitHub
+      const commitRes = await fetch(
+        `https://api.github.com/repos/${ghOwner}/${ghRepo}/contents/public/content.json`,
+        {
+          method: "PUT",
+          headers: { ...ghHeaders, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: "chore: update content from admin",
+            content: btoa(unescape(encodeURIComponent(contentJson))),
+            ...(sha ? { sha } : {}),
+          }),
+        }
+      );
+      if (!commitRes.ok) {
+        const err = await commitRes.json().catch(() => ({}));
+        throw new Error(err.message || commitRes.statusText);
+      }
+
+      // 4. Trigger fetch-episodes workflow (merges iTunes + overrides)
+      const dispatchRes = await fetch(
         `https://api.github.com/repos/${ghOwner}/${ghRepo}/actions/workflows/fetch-episodes.yml/dispatches`,
         {
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${ghToken}`,
-            Accept: "application/vnd.github.v3+json",
-          },
+          headers: ghHeaders,
           body: JSON.stringify({ ref: "main" }),
         }
       );
-      if (res.status === 204) {
-        toast.success("Julkaisu käynnistetty! Sivusto päivittyy muutamassa minuutissa.");
+      if (dispatchRes.status === 204) {
+        toast.success("Julkaistu! Sivusto päivittyy muutamassa minuutissa.");
       } else {
-        const err = await res.json().catch(() => ({}));
-        toast.error(`Julkaisu epäonnistui: ${err.message || res.statusText}`);
+        toast.success("Sisältö tallennettu GitHubiin. Workflow-triggeröinti ei onnistunut – sivusto päivittyy silti seuraavassa automaattihaussa.");
       }
     } catch (e: any) {
-      toast.error(`Virhe: ${e.message}`);
+      toast.error(`Julkaisu epäonnistui: ${e.message}`);
     } finally {
       setIsPublishing(false);
     }
