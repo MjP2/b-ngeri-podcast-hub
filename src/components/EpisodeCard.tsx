@@ -57,11 +57,20 @@ const EpisodeCard = ({ episode, index }: EpisodeCardProps) => {
             </span>
           </div>
           {expanded && (
-            <div className="mt-3 space-y-3">
+            <div className="mt-3 flex flex-col gap-3 md:flex-row md:gap-4">
+              <div className="min-w-0 flex-1 space-y-3">
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {episode.description}
+                </p>
+                {episode.poem && (
+                  <p className="text-sm italic leading-relaxed text-muted-foreground/80 whitespace-pre-line">
+                    {episode.poem}
+                  </p>
+                )}
+              </div>
               {embedUrl && (
                 <div
-                  className="relative w-full overflow-hidden rounded-lg"
-                  style={{ paddingBottom: "56.25%" }}
+                  className="relative shrink-0 overflow-hidden rounded-lg w-full md:w-64 lg:w-80 aspect-video"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <iframe
@@ -72,14 +81,6 @@ const EpisodeCard = ({ episode, index }: EpisodeCardProps) => {
                     className="absolute inset-0 h-full w-full rounded-lg"
                   />
                 </div>
-              )}
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {episode.description}
-              </p>
-              {episode.poem && (
-                <p className="text-sm italic leading-relaxed text-muted-foreground/80 whitespace-pre-line">
-                  {episode.poem}
-                </p>
               )}
             </div>
           )}
