@@ -10,6 +10,22 @@ const Index = () => {
   const [content, setContent] = useState<PodcastContent>(localContent);
   const [episodes, setEpisodes] = useState<Episode[]>(localContent.episodes);
   const [loading, setLoading] = useState(true);
+  const [scrollY, setScrollY] = useState(0);
+  const heroRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = useCallback(() => {
+    if (heroRef.current) {
+      const rect = heroRef.current.getBoundingClientRect();
+      if (rect.bottom > 0) {
+        setScrollY(window.scrollY);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
 
   useEffect(() => {
     const base = import.meta.env.BASE_URL;
