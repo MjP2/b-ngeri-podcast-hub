@@ -26,6 +26,7 @@ export interface PodcastContent {
     copyright: string;
   };
   sponsors: Sponsor[];
+  formflowId: string;
 }
 
 const STORAGE_KEY = "bangeri-cms";
