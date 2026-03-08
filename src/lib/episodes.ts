@@ -59,7 +59,7 @@ export const episodes: Episode[] = [
     appleUrl: "https://podcasts.apple.com/us/podcast/n%C3%A4in-teet-varmaa-passiivista-tuloa/id1774063928?i=1000724997297",
   },
   {
-    id: 7,
+    id: 1000723891288,
     title: "Elias Aalto opiaattikoukussa!",
     date: "28.08.2025",
     duration: "57 min",
