@@ -96,7 +96,13 @@ const FormFlowEmbed = ({ formId }: FormFlowEmbedProps) => {
             <div
               className={`transition-all duration-300 ${formReady ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2.5"}`}
             >
-              <div key={formKey} id="formflow-embed" data-form-id={formId} />
+              <div
+                key={formKey}
+                id="formflow-embed"
+                data-form-id={formId}
+                style={{ width: "100%" }}
+                className="[&_*]:!max-w-full [&_form]:!w-full [&_textarea]:!w-full [&_input]:!w-full [&_button]:!w-full"
+              />
             </div>
           </div>
         </div>
