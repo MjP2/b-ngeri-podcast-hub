@@ -69,7 +69,7 @@ const Index = () => {
         </h2>
         <div className="grid gap-3">
           {episodes.map((ep, i) => (
-            <EpisodeCard key={ep.id} episode={ep} index={i} />
+            <EpisodeCard key={ep.id} episode={ep} index={episodes.length - i} />
           ))}
         </div>
       </section>
