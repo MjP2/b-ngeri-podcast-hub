@@ -67,7 +67,7 @@ export const episodes: Episode[] = [
     appleUrl: "https://podcasts.apple.com/us/podcast/elias-aalto-opiaattikoukussa/id1774063928?i=1000723891288",
   },
   {
-    id: 8,
+    id: 1000722962321,
     title: "ULTIMAATTINEN asuntomessujen trollaus",
     date: "21.08.2025",
     duration: "1h 3min",
