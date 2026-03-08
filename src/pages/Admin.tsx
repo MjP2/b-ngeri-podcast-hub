@@ -13,6 +13,7 @@ import {
   Download,
   Upload,
   ArrowLeft,
+  Rocket,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -30,8 +31,52 @@ import { Link } from "react-router-dom";
 export default function Admin() {
   const [content, setContent] = useState<PodcastContent>(() => loadContent());
   const [expandedEpisode, setExpandedEpisode] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<"hero" | "episodes" | "links" | "footer" | "sponsors">("hero");
+  const [activeTab, setActiveTab] = useState<"hero" | "episodes" | "links" | "footer" | "sponsors" | "settings">("hero");
   const importRef = useRef<HTMLInputElement>(null);
+  const [isPublishing, setIsPublishing] = useState(false);
+
+  // GitHub settings stored in localStorage
+  const [ghOwner, setGhOwner] = useState(() => localStorage.getItem("gh_owner") || "");
+  const [ghRepo, setGhRepo] = useState(() => localStorage.getItem("gh_repo") || "");
+  const [ghToken, setGhToken] = useState(() => localStorage.getItem("gh_token") || "");
+
+  useEffect(() => {
+    localStorage.setItem("gh_owner", ghOwner);
+    localStorage.setItem("gh_repo", ghRepo);
+    localStorage.setItem("gh_token", ghToken);
+  }, [ghOwner, ghRepo, ghToken]);
+
+  const handlePublish = async () => {
+    if (!ghOwner || !ghRepo || !ghToken) {
+      toast.error("Täytä GitHub-asetukset ensin (Asetukset-välilehti)");
+      setActiveTab("settings");
+      return;
+    }
+    setIsPublishing(true);
+    try {
+      const res = await fetch(
+        `https://api.github.com/repos/${ghOwner}/${ghRepo}/actions/workflows/fetch-episodes.yml/dispatches`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${ghToken}`,
+            Accept: "application/vnd.github.v3+json",
+          },
+          body: JSON.stringify({ ref: "main" }),
+        }
+      );
+      if (res.status === 204) {
+        toast.success("Julkaisu käynnistetty! Sivusto päivittyy muutamassa minuutissa.");
+      } else {
+        const err = await res.json().catch(() => ({}));
+        toast.error(`Julkaisu epäonnistui: ${err.message || res.statusText}`);
+      }
+    } catch (e: any) {
+      toast.error(`Virhe: ${e.message}`);
+    } finally {
+      setIsPublishing(false);
+    }
+  };
 
   useEffect(() => {
     saveContent(content);
@@ -148,6 +193,7 @@ export default function Admin() {
     { key: "links" as const, label: "Linkit" },
     { key: "sponsors" as const, label: `Sponsorit (${content.sponsors.length})` },
     { key: "footer" as const, label: "Footer" },
+    { key: "settings" as const, label: "⚙️" },
   ];
 
   return (
@@ -171,6 +217,14 @@ export default function Admin() {
             </Button>
             <Button variant="outline" size="sm" className="gap-2" onClick={() => importRef.current?.click()}>
               <Upload size={14} /> Import
+            </Button>
+            <Button
+              size="sm"
+              className="gap-2"
+              onClick={handlePublish}
+              disabled={isPublishing}
+            >
+              <Rocket size={14} /> {isPublishing ? "Julkaistaan..." : "Julkaise"}
             </Button>
             <input ref={importRef} type="file" accept=".json" className="hidden" onChange={handleImport} />
           </div>
@@ -303,6 +357,28 @@ export default function Admin() {
           <div className="space-y-4 rounded-xl border border-border bg-card p-5">
             <h2 className="font-display text-lg font-semibold">Footer</h2>
             <FieldInput label="Copyright" value={content.footer.copyright} onChange={(v) => updateFooter("copyright", v)} />
+          </div>
+        )}
+
+        {/* Settings */}
+        {activeTab === "settings" && (
+          <div className="space-y-4 rounded-xl border border-border bg-card p-5">
+            <h2 className="font-display text-lg font-semibold">GitHub-asetukset</h2>
+            <p className="text-sm text-muted-foreground">
+              Syötä GitHub-tiedot, jotta Julkaise-nappi voi käynnistää sivuston päivityksen.
+              Tarvitset Personal Access Tokenin (PAT) jolla on <code>repo</code>-oikeus.
+            </p>
+            <FieldInput label="Omistaja (owner)" value={ghOwner} onChange={setGhOwner} placeholder="esim. käyttäjänimi" />
+            <FieldInput label="Repo" value={ghRepo} onChange={setGhRepo} placeholder="esim. bangeri-podcast" />
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">GitHub Token (PAT)</Label>
+              <Input
+                type="password"
+                value={ghToken}
+                onChange={(e) => setGhToken(e.target.value)}
+                placeholder="ghp_..."
+              />
+            </div>
           </div>
         )}
       </div>
