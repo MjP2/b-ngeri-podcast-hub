@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { Episode } from "@/lib/episodes";
 import { Clock, Calendar, ChevronDown } from "lucide-react";
 
@@ -9,35 +9,11 @@ interface EpisodeCardProps {
 
 const EpisodeCard = ({ episode, index }: EpisodeCardProps) => {
   const [expanded, setExpanded] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(el);
-        }
-      },
-      { threshold: 0.01, rootMargin: "0px 0px 200px 0px" }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
 
   return (
     <button
-      ref={ref}
       onClick={() => setExpanded(!expanded)}
-      className="group block w-full rounded-xl border border-border bg-card p-5 text-left transition-all duration-500 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
-      style={{
-        opacity: isVisible ? 1 : 0,
-        transform: isVisible ? "translateY(0)" : "translateY(30px)",
-        transition: `opacity 0.5s ease-out ${index * 0.05}s, transform 0.5s ease-out ${index * 0.05}s`,
-      }}
+      className="group block w-full rounded-xl border border-border bg-card p-5 text-left transition-colors duration-200 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
     >
       <div className="flex items-start gap-4">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 font-display text-sm font-bold text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
