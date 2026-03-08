@@ -359,6 +359,28 @@ export default function Admin() {
             <FieldInput label="Copyright" value={content.footer.copyright} onChange={(v) => updateFooter("copyright", v)} />
           </div>
         )}
+
+        {/* Settings */}
+        {activeTab === "settings" && (
+          <div className="space-y-4 rounded-xl border border-border bg-card p-5">
+            <h2 className="font-display text-lg font-semibold">GitHub-asetukset</h2>
+            <p className="text-sm text-muted-foreground">
+              Syötä GitHub-tiedot, jotta Julkaise-nappi voi käynnistää sivuston päivityksen.
+              Tarvitset Personal Access Tokenin (PAT) jolla on <code>repo</code>-oikeus.
+            </p>
+            <FieldInput label="Omistaja (owner)" value={ghOwner} onChange={setGhOwner} placeholder="esim. käyttäjänimi" />
+            <FieldInput label="Repo" value={ghRepo} onChange={setGhRepo} placeholder="esim. bangeri-podcast" />
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">GitHub Token (PAT)</Label>
+              <Input
+                type="password"
+                value={ghToken}
+                onChange={(e) => setGhToken(e.target.value)}
+                placeholder="ghp_..."
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
