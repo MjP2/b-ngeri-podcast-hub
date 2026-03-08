@@ -64,7 +64,11 @@ const EpisodeCard = ({ episode, index }: EpisodeCardProps) => {
               {episode.duration}
             </span>
           </div>
-          {expanded && (
+          <div
+            ref={contentRef}
+            className="overflow-hidden transition-all duration-300 ease-in-out"
+            style={{ maxHeight: expanded ? contentHeight : 0, opacity: expanded ? 1 : 0 }}
+          >
             <div className="mt-3 flex flex-col gap-3 md:flex-row md:gap-4">
               <div className="min-w-0 flex-1 space-y-3">
                 <p className="text-sm leading-relaxed text-muted-foreground">
@@ -91,7 +95,7 @@ const EpisodeCard = ({ episode, index }: EpisodeCardProps) => {
                 </div>
               )}
             </div>
-          )}
+          </div>
         </div>
         <ChevronDown
           className={`h-5 w-5 shrink-0 self-center text-muted-foreground transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
