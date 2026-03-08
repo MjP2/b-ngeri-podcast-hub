@@ -7,8 +7,24 @@ interface EpisodeCardProps {
   index: number;
 }
 
+function getYoutubeEmbedUrl(url: string): string | null {
+  try {
+    const u = new URL(url);
+    let videoId: string | null = null;
+    if (u.hostname.includes("youtu.be")) {
+      videoId = u.pathname.slice(1);
+    } else if (u.searchParams.has("v")) {
+      videoId = u.searchParams.get("v");
+    }
+    return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+  } catch {
+    return null;
+  }
+}
+
 const EpisodeCard = ({ episode, index }: EpisodeCardProps) => {
   const [expanded, setExpanded] = useState(false);
+  const embedUrl = episode.youtubeUrl ? getYoutubeEmbedUrl(episode.youtubeUrl) : null;
 
   return (
     <button
@@ -41,7 +57,22 @@ const EpisodeCard = ({ episode, index }: EpisodeCardProps) => {
             </span>
           </div>
           {expanded && (
-            <div className="mt-3 space-y-2">
+            <div className="mt-3 space-y-3">
+              {embedUrl && (
+                <div
+                  className="relative w-full overflow-hidden rounded-lg"
+                  style={{ paddingBottom: "56.25%" }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <iframe
+                    src={embedUrl}
+                    title={episode.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="absolute inset-0 h-full w-full rounded-lg"
+                  />
+                </div>
+              )}
               <p className="text-sm leading-relaxed text-muted-foreground">
                 {episode.description}
               </p>
