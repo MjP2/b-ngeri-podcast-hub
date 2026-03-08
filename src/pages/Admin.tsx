@@ -192,6 +192,7 @@ export default function Admin() {
     { key: "links" as const, label: "Linkit" },
     { key: "sponsors" as const, label: `Sponsorit (${content.sponsors.length})` },
     { key: "footer" as const, label: "Footer" },
+    { key: "settings" as const, label: "⚙️" },
   ];
 
   return (
