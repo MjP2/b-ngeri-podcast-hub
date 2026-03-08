@@ -50,14 +50,15 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Full-width Hero Image with Parallax */}
-      <div ref={heroRef} className="relative w-full overflow-hidden">
+      <div ref={heroRef} className="relative w-full overflow-hidden max-h-[50vh]">
         <img
           src={hero.imageUrl || heroImage}
           alt="Bängeri Podcast"
-          className="w-full object-cover"
+          className="w-full h-full object-cover object-center"
           style={{ transform: `translateY(${scrollY * 0.3}px)` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/30 via-transparent to-background/30" />
       </div>
 
       {/* Info section */}
