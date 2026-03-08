@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Episode } from "@/lib/episodes";
-import { Play, Clock, Calendar } from "lucide-react";
+import { Clock, Calendar, ChevronDown } from "lucide-react";
 
 interface EpisodeCardProps {
   episode: Episode;
@@ -7,12 +8,12 @@ interface EpisodeCardProps {
 }
 
 const EpisodeCard = ({ episode, index }: EpisodeCardProps) => {
+  const [expanded, setExpanded] = useState(false);
+
   return (
-    <a
-      href={episode.appleUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group block rounded-xl border border-border bg-card p-5 transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
+    <button
+      onClick={() => setExpanded(!expanded)}
+      className="group block w-full rounded-xl border border-border bg-card p-5 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
     >
       <div className="flex items-start gap-4">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 font-display text-sm font-bold text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
@@ -32,15 +33,17 @@ const EpisodeCard = ({ episode, index }: EpisodeCardProps) => {
               {episode.duration}
             </span>
           </div>
-          <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
-            {episode.description}
-          </p>
+          {expanded && (
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              {episode.description}
+            </p>
+          )}
         </div>
-        <div className="shrink-0 self-center opacity-0 transition-opacity group-hover:opacity-100">
-          <Play className="h-5 w-5 text-primary" fill="currentColor" />
-        </div>
+        <ChevronDown
+          className={`h-5 w-5 shrink-0 self-center text-muted-foreground transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
+        />
       </div>
-    </a>
+    </button>
   );
 };
 
