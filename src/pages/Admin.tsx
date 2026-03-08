@@ -135,7 +135,6 @@ export default function Admin() {
             content: btoa(unescape(encodeURIComponent(contentJson))),
             ...(sha ? { sha } : {}),
           }),
-          }),
         }
       );
       if (!commitRes.ok) {
