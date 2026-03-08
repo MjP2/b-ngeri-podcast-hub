@@ -19,7 +19,7 @@ export const episodes: Episode[] = [
     appleUrl: "https://podcasts.apple.com/us/podcast/miksi-koulukiusaamista-ei-saada-loppumaan/id1774063928?i=1000730990609",
   },
   {
-    id: 2,
+    id: 1000729719846,
     title: "Kuka on oikeasti maailman rikkain ihminen?",
     date: "02.10.2025",
     duration: "56 min",
