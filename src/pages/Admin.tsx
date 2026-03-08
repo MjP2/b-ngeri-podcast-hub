@@ -14,6 +14,7 @@ import {
   Upload,
   ArrowLeft,
   Rocket,
+  ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
