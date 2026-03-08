@@ -8,8 +8,10 @@ interface FormFlowEmbedProps {
 const FormFlowEmbed = ({ formId }: FormFlowEmbedProps) => {
   const [open, setOpen] = useState(false);
   const [formKey, setFormKey] = useState(0);
+  const [formReady, setFormReady] = useState(false);
 
   const handleOpen = () => {
+    setFormReady(false);
     setFormKey((k) => k + 1);
     setOpen(true);
   };
@@ -17,10 +19,6 @@ const FormFlowEmbed = ({ formId }: FormFlowEmbedProps) => {
   // Load/reload the FormFlow script each time the form container remounts
   useEffect(() => {
     if (!open) return;
-
-    let closeTimer: ReturnType<typeof setTimeout>;
-    let observer: MutationObserver;
-    let initialChildCount = -1;
 
     const timer = setTimeout(() => {
       document.querySelectorAll('script[src*="myformflow.io"]').forEach((s) => s.remove());
@@ -30,40 +28,14 @@ const FormFlowEmbed = ({ formId }: FormFlowEmbedProps) => {
       script.async = true;
 
       script.onload = () => {
-        // Wait a bit for the widget to render, then start watching
-        setTimeout(() => {
-          const container = document.getElementById("formflow-embed");
-          if (!container) return;
-
-          // Record initial state after form renders
-          initialChildCount = container.querySelectorAll("input, textarea, select, button").length;
-
-          observer = new MutationObserver(() => {
-            const html = container.innerHTML.toLowerCase();
-            const currentFormElements = container.querySelectorAll("input, textarea, select, button").length;
-
-            // Detect submission: form elements disappear OR thank-you text appears
-            const hasThankYou = html.includes("thank") || html.includes("kiitos") || html.includes("submitted") || html.includes("success");
-            const formDisappeared = initialChildCount > 0 && currentFormElements === 0;
-
-            if (hasThankYou || formDisappeared) {
-              closeTimer = setTimeout(() => setOpen(false), 1000);
-              observer.disconnect();
-            }
-          });
-
-          observer.observe(container, { childList: true, subtree: true, characterData: true, attributes: true });
-        }, 1000);
+        // Wait for widget to render, then fade in
+        setTimeout(() => setFormReady(true), 500);
       };
 
       document.body.appendChild(script);
     }, 50);
 
-    return () => {
-      clearTimeout(timer);
-      clearTimeout(closeTimer);
-      observer?.disconnect();
-    };
+    return () => clearTimeout(timer);
   }, [open, formKey]);
 
   // Lock body scroll when modal is open
@@ -119,9 +91,18 @@ const FormFlowEmbed = ({ formId }: FormFlowEmbedProps) => {
             </button>
           </div>
 
-          {/* Form content */}
+          {/* Form content with fade-in */}
           <div className="p-5 max-h-[70vh] overflow-y-auto">
-            <div key={formKey} id="formflow-embed" data-form-id={formId} />
+            <div
+              className={`transition-opacity duration-300 ${formReady ? "opacity-100" : "opacity-0"}`}
+            >
+              <div key={formKey} id="formflow-embed" data-form-id={formId} />
+            </div>
+            {!formReady && (
+              <div className="flex items-center justify-center py-8">
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              </div>
+            )}
           </div>
         </div>
       </div>
