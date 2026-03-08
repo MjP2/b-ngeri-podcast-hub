@@ -217,6 +217,14 @@ export default function Admin() {
             <Button variant="outline" size="sm" className="gap-2" onClick={() => importRef.current?.click()}>
               <Upload size={14} /> Import
             </Button>
+            <Button
+              size="sm"
+              className="gap-2"
+              onClick={handlePublish}
+              disabled={isPublishing}
+            >
+              <Rocket size={14} /> {isPublishing ? "Julkaistaan..." : "Julkaise"}
+            </Button>
             <input ref={importRef} type="file" accept=".json" className="hidden" onChange={handleImport} />
           </div>
         </div>
