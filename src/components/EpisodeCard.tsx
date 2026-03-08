@@ -70,8 +70,7 @@ const EpisodeCard = ({ episode, index }: EpisodeCardProps) => {
               </div>
               {embedUrl && (
                 <div
-                  className="relative w-full shrink-0 overflow-hidden rounded-lg md:w-64 lg:w-80"
-                  style={{ paddingBottom: "56.25%" }}
+                  className="relative shrink-0 overflow-hidden rounded-lg w-full md:w-64 lg:w-80 aspect-video"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <iframe
@@ -79,7 +78,7 @@ const EpisodeCard = ({ episode, index }: EpisodeCardProps) => {
                     title={episode.title}
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
-                    className="absolute inset-0 h-full w-full rounded-lg md:static md:aspect-video md:h-auto"
+                    className="absolute inset-0 h-full w-full rounded-lg"
                   />
                 </div>
               )}
