@@ -22,7 +22,7 @@ const EpisodeCard = ({ episode, index }: EpisodeCardProps) => {
           observer.unobserve(el);
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.01, rootMargin: "0px 0px 200px 0px" }
     );
     observer.observe(el);
     return () => observer.disconnect();
