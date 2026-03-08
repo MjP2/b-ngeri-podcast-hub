@@ -69,7 +69,7 @@ const EpisodeCard = ({ episode, index }: EpisodeCardProps) => {
             className="overflow-hidden transition-all duration-300 ease-in-out"
             style={{ maxHeight: expanded ? contentHeight : 0, opacity: expanded ? 1 : 0 }}
           >
-            <div className="mt-3 flex flex-col gap-3 md:flex-row md:gap-4">
+            <div className="mt-3 flex flex-col gap-3 md:flex-row md:items-start md:gap-4">
               <div className="min-w-0 flex-1 space-y-3">
                 <p className="text-sm leading-relaxed text-muted-foreground">
                   {episode.description}
