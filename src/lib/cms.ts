@@ -56,6 +56,10 @@ export function loadContent(): PodcastContent {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
+      // Clean out legacy episodes with simple numeric ids (1-99)
+      if (parsed.episodes) {
+        parsed.episodes = parsed.episodes.filter((ep: Episode) => ep.id > 99);
+      }
       return { ...defaults, ...parsed };
     }
   } catch {}
