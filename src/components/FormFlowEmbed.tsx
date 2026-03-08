@@ -8,25 +8,27 @@ interface FormFlowEmbedProps {
 const FormFlowEmbed = ({ formId }: FormFlowEmbedProps) => {
   const [open, setOpen] = useState(false);
   const [formKey, setFormKey] = useState(0);
-  const scriptLoaded = useRef(false);
 
   const handleOpen = () => {
-    setFormKey((k) => k + 1); // Force remount to reset form
+    setFormKey((k) => k + 1);
     setOpen(true);
   };
 
+  // Load/reload the FormFlow script each time the form container remounts
   useEffect(() => {
-    if (open && !scriptLoaded.current) {
-      scriptLoaded.current = true;
+    if (!open) return;
+
+    const timer = setTimeout(() => {
+      // Remove previous FormFlow scripts to force fresh init
+      document.querySelectorAll('script[src*="myformflow.io"]').forEach((s) => s.remove());
+
       const script = document.createElement("script");
       script.src = "https://myformflow.io/embed/widget.js";
       script.async = true;
       document.body.appendChild(script);
-    }
-    // Re-initialize widget when form remounts
-    if (open && scriptLoaded.current && (window as any).FormFlowWidget) {
-      setTimeout(() => (window as any).FormFlowWidget.init(), 100);
-    }
+    }, 50);
+
+    return () => clearTimeout(timer);
   }, [open, formKey]);
 
   // Lock body scroll when modal is open
