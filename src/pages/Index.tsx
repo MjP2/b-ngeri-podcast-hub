@@ -35,11 +35,34 @@ const Index = () => {
       fetch(`${base}content.json`).then(r => r.ok ? r.json() : null),
       fetch(`${base}episodes.json`).then(r => r.ok ? r.json() : null),
     ]).then(([contentResult, episodesResult]) => {
+      const cmsEpisodes: Episode[] =
+        contentResult.status === "fulfilled" && contentResult.value?.episodes
+          ? contentResult.value.episodes
+          : [];
+
+      const fetchedEpisodes: Episode[] =
+        episodesResult.status === "fulfilled" && episodesResult.value
+          ? episodesResult.value
+          : [];
+
+      // Merge: fetched episodes as base, overlay CMS data (poems etc.)
+      const cmsMap = new Map(cmsEpisodes.map((e: Episode) => [e.id, e]));
+      const mergedById = new Map<number, Episode>();
+
+      for (const ep of fetchedEpisodes) {
+        const cmsEp = cmsMap.get(ep.id);
+        mergedById.set(ep.id, cmsEp ? { ...ep, ...cmsEp } : ep);
+        cmsMap.delete(ep.id);
+      }
+      for (const [, ep] of cmsMap) {
+        mergedById.set(ep.id, ep);
+      }
+
+      const merged = Array.from(mergedById.values());
+      if (merged.length > 0) setEpisodes(merged);
+
       if (contentResult.status === "fulfilled" && contentResult.value) {
         setContent(prev => ({ ...prev, ...contentResult.value }));
-      }
-      if (episodesResult.status === "fulfilled" && episodesResult.value) {
-        setEpisodes(episodesResult.value);
       }
       setLoading(false);
     });
