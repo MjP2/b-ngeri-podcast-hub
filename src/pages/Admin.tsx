@@ -131,9 +131,10 @@ export default function Admin() {
           method: "PUT",
           headers: { ...ghHeaders, "Content-Type": "application/json" },
           body: JSON.stringify({
-            message: "chore: update content from admin",
+            message: commitMessage.trim() || "chore: update content from admin",
             content: btoa(unescape(encodeURIComponent(contentJson))),
             ...(sha ? { sha } : {}),
+          }),
           }),
         }
       );
