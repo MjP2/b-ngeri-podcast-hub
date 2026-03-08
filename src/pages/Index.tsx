@@ -120,6 +120,13 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Feedback Form */}
+      {formflowId && (
+        <section className="container mx-auto px-4 pb-8">
+          <FormFlowEmbed formId={formflowId} />
+        </section>
+      )}
+
       {/* Episodes */}
       <section className="container mx-auto px-4 py-12 md:py-16">
         <h2 className="mb-8 font-display text-2xl font-bold text-foreground md:text-3xl">
