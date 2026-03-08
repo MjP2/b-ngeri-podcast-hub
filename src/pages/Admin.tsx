@@ -298,6 +298,11 @@ export default function Admin() {
             </h1>
           </div>
           <div className="flex items-center gap-2">
+            <Link to="/" target="_blank">
+              <Button variant="outline" size="sm" className="gap-2">
+                <ExternalLink size={14} /> Esikatselu
+              </Button>
+            </Link>
             <Button variant="outline" size="sm" className="gap-2" onClick={handleExport}>
               <Download size={14} /> Export
             </Button>
