@@ -42,6 +42,7 @@ export function defaultContent(): PodcastContent {
     footer: {
       copyright: "© Aalto Digital Oy",
     },
+    sponsors: [],
   };
 }
 

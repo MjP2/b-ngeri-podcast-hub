@@ -120,10 +120,33 @@ export default function Admin() {
     e.target.value = "";
   };
 
+  const addSponsor = () => {
+    const newSponsor: Sponsor = {
+      id: content.sponsors.length > 0 ? Math.max(...content.sponsors.map((s) => s.id)) + 1 : 1,
+      imageUrl: "",
+      linkUrl: "",
+    };
+    setContent((prev) => ({ ...prev, sponsors: [...prev.sponsors, newSponsor] }));
+    toast.success("Sponsori lisätty");
+  };
+
+  const updateSponsor = (id: number, field: string, value: string) => {
+    setContent((prev) => ({
+      ...prev,
+      sponsors: prev.sponsors.map((s) => (s.id === id ? { ...s, [field]: value } : s)),
+    }));
+  };
+
+  const removeSponsor = (id: number) => {
+    setContent((prev) => ({ ...prev, sponsors: prev.sponsors.filter((s) => s.id !== id) }));
+    toast.info("Sponsori poistettu");
+  };
+
   const tabs = [
     { key: "hero" as const, label: "Hero" },
     { key: "episodes" as const, label: `Jaksot (${content.episodes.length})` },
     { key: "links" as const, label: "Linkit" },
+    { key: "sponsors" as const, label: `Sponsorit (${content.sponsors.length})` },
     { key: "footer" as const, label: "Footer" },
   ];
 
