@@ -20,9 +20,16 @@ const EpisodeCard = ({ episode, index }: EpisodeCardProps) => {
           {index + 1}
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="font-display text-lg font-bold leading-tight text-foreground transition-colors group-hover:text-primary">
-            {episode.title}
-          </h3>
+          <div className="flex items-center gap-2">
+            <h3 className="font-display text-lg font-bold leading-tight text-foreground transition-colors group-hover:text-primary">
+              {episode.title}
+            </h3>
+            {episode.poem && (
+              <span className="shrink-0 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
+                Runo
+              </span>
+            )}
+          </div>
           <div className="mt-2 flex items-center gap-4 text-xs text-muted-foreground">
             <span className="flex items-center gap-1">
               <Calendar className="h-3.5 w-3.5" />
@@ -34,9 +41,16 @@ const EpisodeCard = ({ episode, index }: EpisodeCardProps) => {
             </span>
           </div>
           {expanded && (
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              {episode.description}
-            </p>
+            <div className="mt-3 space-y-2">
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {episode.description}
+              </p>
+              {episode.poem && (
+                <p className="text-sm italic leading-relaxed text-muted-foreground/80 whitespace-pre-line">
+                  {episode.poem}
+                </p>
+              )}
+            </div>
           )}
         </div>
         <ChevronDown
