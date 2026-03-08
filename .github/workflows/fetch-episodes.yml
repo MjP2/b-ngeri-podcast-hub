@@ -17,12 +17,56 @@ jobs:
 
       - name: Fetch and merge episodes
         run: |
+          # Fetch iTunes episodes
           curl -s "https://itunes.apple.com/lookup?id=1774063928&media=podcast&entity=podcastEpisode&limit=200" \
             -o /tmp/itunes-raw.json
+
+          # Resolve YouTube handle to channel ID and fetch RSS
+          YT_HANDLE="@BängeriPodcast"
+          echo "Resolving YouTube handle: $YT_HANDLE"
+
+          # Fetch channel page and extract channel_id from meta tag
+          YT_CHANNEL_ID=$(curl -s "https://www.youtube.com/$YT_HANDLE" \
+            -H "Accept-Language: en" \
+            -H "User-Agent: Mozilla/5.0" | \
+            grep -oP 'channel_id=\K[^"&]+' | head -1)
+
+          if [ -z "$YT_CHANNEL_ID" ]; then
+            # Fallback: try yt.lemnoslife.com API
+            YT_CHANNEL_ID=$(curl -s "https://yt.lemnoslife.com/channels?handle=$YT_HANDLE" | \
+              python3 -c "import sys,json; print(json.load(sys.stdin).get('items',[{}])[0].get('id',''))" 2>/dev/null)
+          fi
+
+          echo "YouTube channel ID: $YT_CHANNEL_ID"
+
+          # Fetch YouTube RSS feed if we got a channel ID
+          if [ -n "$YT_CHANNEL_ID" ]; then
+            curl -s "https://www.youtube.com/feeds/videos.xml?channel_id=$YT_CHANNEL_ID" -o /tmp/youtube-rss.xml
+          else
+            echo "Could not resolve YouTube channel ID, skipping YouTube matching"
+            echo "" > /tmp/youtube-rss.xml
+          fi
 
           node -e "
           const fs = require('fs');
           const raw = JSON.parse(fs.readFileSync('/tmp/itunes-raw.json', 'utf8'));
+
+          // Parse YouTube RSS feed
+          let ytVideos = [];
+          try {
+            const rssXml = fs.readFileSync('/tmp/youtube-rss.xml', 'utf8');
+            // Simple XML parsing for YouTube RSS entries
+            const entries = rssXml.split('<entry>').slice(1);
+            ytVideos = entries.map(entry => {
+              const videoId = (entry.match(/<yt:videoId>([^<]+)</) || [])[1] || '';
+              const title = (entry.match(/<title>([^<]+)</) || [])[1] || '';
+              const published = (entry.match(/<published>([^<]+)</) || [])[1] || '';
+              return { videoId, title, published: new Date(published), url: 'https://www.youtube.com/watch?v=' + videoId };
+            }).filter(v => v.videoId);
+            console.log('Found ' + ytVideos.length + ' YouTube videos');
+          } catch(e) {
+            console.log('No YouTube RSS data');
+          }
 
           // Load admin overrides if content.json exists
           let overrides = {};
@@ -64,6 +108,27 @@ jobs:
               desc = desc.replace(/\s*Bängeri TikTok:.*$/i, '');
               desc = desc.replace(/\s*Muista myös tilata kanava.*$/i, '');
 
+              // Match YouTube video by closest date (within 3 days)
+              let youtubeUrl = '';
+              if (ytVideos.length > 0) {
+                const epDate = new Date(ep.releaseDate);
+                let closest = null;
+                let closestDiff = Infinity;
+                for (const yt of ytVideos) {
+                  const diff = Math.abs(epDate - yt.published);
+                  if (diff < closestDiff) {
+                    closestDiff = diff;
+                    closest = yt;
+                  }
+                }
+                // Only match if within 3 days
+                if (closest && closestDiff < 3 * 24 * 60 * 60 * 1000) {
+                  youtubeUrl = closest.url;
+                  // Remove matched video so it's not reused
+                  ytVideos = ytVideos.filter(v => v.videoId !== closest.videoId);
+                }
+              }
+
               return {
                 id: ep.trackId,
                 title: ep.trackName,
@@ -71,18 +136,21 @@ jobs:
                 duration: duration,
                 description: desc,
                 appleUrl: ep.trackViewUrl.replace('&uo=4', ''),
+                ...(youtubeUrl ? { youtubeUrl } : {}),
               };
             });
 
           // Merge: admin overrides > existing edits > iTunes data
           const merged = itunesEpisodes.map(itEp => {
             if (overrides[itEp.id]) {
-              // Admin has edited this episode — use admin version
-              return { ...itEp, ...overrides[itEp.id] };
+              // Admin has edited this episode — use admin version but keep auto-matched youtubeUrl if not manually set
+              const ov = overrides[itEp.id];
+              return { ...itEp, ...ov, youtubeUrl: ov.youtubeUrl || itEp.youtubeUrl || '' };
             }
             if (existingEpisodes[itEp.id]) {
-              // Previously saved edits — preserve them
-              return existingEpisodes[itEp.id];
+              // Previously saved edits — preserve them, but fill youtubeUrl if missing
+              const ex = existingEpisodes[itEp.id];
+              return { ...ex, youtubeUrl: ex.youtubeUrl || itEp.youtubeUrl || '' };
             }
             // Brand new from iTunes
             return itEp;
