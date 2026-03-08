@@ -46,6 +46,7 @@ export function defaultContent(): PodcastContent {
       copyright: "© Aalto Digital Oy",
     },
     sponsors: [],
+    formflowId: "864bf112-1acc-42ed-b5d9-26ab7ef0a34b",
   };
 }
 
