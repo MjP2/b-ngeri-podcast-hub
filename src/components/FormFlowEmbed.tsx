@@ -72,7 +72,7 @@ const FormFlowEmbed = ({ formId }: FormFlowEmbedProps) => {
 
         {/* Modal */}
         <div
-          className={`relative z-10 w-full max-w-lg mx-4 rounded-2xl border border-border bg-card shadow-2xl transition-all duration-300 ${
+          className={`relative z-10 w-full max-w-lg mx-2 sm:mx-4 rounded-2xl border border-border bg-card shadow-2xl transition-all duration-300 ${
             open ? "scale-100 opacity-100" : "scale-95 opacity-0"
           }`}
           onClick={(e) => e.stopPropagation()}
