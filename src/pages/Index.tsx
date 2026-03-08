@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import heroImage from "@/assets/bangeri-hero.webp";
 import { loadContent, PodcastContent } from "@/lib/cms";
 import { Episode } from "@/lib/episodes";
@@ -10,6 +10,22 @@ const Index = () => {
   const [content, setContent] = useState<PodcastContent>(localContent);
   const [episodes, setEpisodes] = useState<Episode[]>(localContent.episodes);
   const [loading, setLoading] = useState(true);
+  const [scrollY, setScrollY] = useState(0);
+  const heroRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = useCallback(() => {
+    if (heroRef.current) {
+      const rect = heroRef.current.getBoundingClientRect();
+      if (rect.bottom > 0) {
+        setScrollY(window.scrollY);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
 
   useEffect(() => {
     const base = import.meta.env.BASE_URL;
@@ -33,12 +49,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Full-width Hero Image */}
-      <div className="relative w-full">
+      {/* Full-width Hero Image with Parallax */}
+      <div ref={heroRef} className="relative w-full overflow-hidden">
         <img
           src={hero.imageUrl || heroImage}
           alt="Bängeri Podcast"
           className="w-full object-cover"
+          style={{ transform: `translateY(${scrollY * 0.3}px)` }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
       </div>
