@@ -7,7 +7,13 @@ interface FormFlowEmbedProps {
 
 const FormFlowEmbed = ({ formId }: FormFlowEmbedProps) => {
   const [open, setOpen] = useState(false);
+  const [formKey, setFormKey] = useState(0);
   const scriptLoaded = useRef(false);
+
+  const handleOpen = () => {
+    setFormKey((k) => k + 1); // Force remount to reset form
+    setOpen(true);
+  };
 
   useEffect(() => {
     if (open && !scriptLoaded.current) {
@@ -17,7 +23,11 @@ const FormFlowEmbed = ({ formId }: FormFlowEmbedProps) => {
       script.async = true;
       document.body.appendChild(script);
     }
-  }, [open]);
+    // Re-initialize widget when form remounts
+    if (open && scriptLoaded.current && (window as any).FormFlowWidget) {
+      setTimeout(() => (window as any).FormFlowWidget.init(), 100);
+    }
+  }, [open, formKey]);
 
   // Lock body scroll when modal is open
   useEffect(() => {
