@@ -1,5 +1,11 @@
 import { episodes as defaultEpisodes, LINKS as defaultLinks, Episode } from "./episodes";
 
+export interface Sponsor {
+  id: number;
+  imageUrl: string;
+  linkUrl: string;
+}
+
 export interface PodcastContent {
   hero: {
     title: string;
@@ -18,6 +24,7 @@ export interface PodcastContent {
   footer: {
     copyright: string;
   };
+  sponsors: Sponsor[];
 }
 
 const STORAGE_KEY = "bangeri-cms";
