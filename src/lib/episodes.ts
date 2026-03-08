@@ -6,6 +6,7 @@ export interface Episode {
   description: string;
   appleUrl: string;
   poem?: string;
+  youtubeUrl?: string;
 }
 
 export const episodes: Episode[] = [

@@ -406,6 +406,7 @@ export default function Admin() {
                       <FieldInput label="Kesto" value={ep.duration} onChange={(v) => updateEpisode(ep.id, "duration", v)} placeholder="1h 30min" />
                     </div>
                     <FieldTextarea label="Kuvaus" value={ep.description} onChange={(v) => updateEpisode(ep.id, "description", v)} />
+                    <FieldInput label="YouTube URL" value={ep.youtubeUrl || ""} onChange={(v) => updateEpisode(ep.id, "youtubeUrl", v)} placeholder="https://www.youtube.com/watch?v=..." />
                     <FieldTextarea label="Runo" value={ep.poem || ""} onChange={(v) => updateEpisode(ep.id, "poem", v)} />
                   </div>
                 )}
