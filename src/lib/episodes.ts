@@ -27,7 +27,7 @@ export const episodes: Episode[] = [
     appleUrl: "https://podcasts.apple.com/us/podcast/kuka-on-oikeasti-maailman-rikkain-ihminen/id1774063928?i=1000729719846",
   },
   {
-    id: 3,
+    id: 1000728409532,
     title: "USA:n sensuuri, Palestiina ja Gaza, yksinäisyys ja tekoäly",
     date: "25.09.2025",
     duration: "1h 1min",
