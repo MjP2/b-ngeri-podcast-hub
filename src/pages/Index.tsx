@@ -1,11 +1,31 @@
+import { useState, useEffect } from "react";
 import heroImage from "@/assets/bangeri-hero.jpg";
 import { loadContent } from "@/lib/cms";
+import { Episode } from "@/lib/episodes";
 import EpisodeCard from "@/components/EpisodeCard";
 import PlatformLinks from "@/components/PlatformLinks";
 
 const Index = () => {
   const content = loadContent();
-  const { hero, episodes, links, footer, sponsors } = content;
+  const { hero, links, footer, sponsors } = content;
+  const [episodes, setEpisodes] = useState<Episode[]>(content.episodes);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`${import.meta.env.BASE_URL}episodes.json`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Not found");
+        return res.json();
+      })
+      .then((data: Episode[]) => {
+        setEpisodes(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        // Fall back to CMS/hardcoded episodes
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <div className="min-h-screen bg-background text-foreground">

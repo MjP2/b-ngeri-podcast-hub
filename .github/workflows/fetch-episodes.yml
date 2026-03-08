@@ -1,0 +1,67 @@
+name: Fetch Podcast Episodes
+
+on:
+  schedule:
+    - cron: '0 */6 * * *' # Every 6 hours
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  fetch-episodes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch episodes from iTunes API
+        run: |
+          curl -s "https://itunes.apple.com/lookup?id=1774063928&media=podcast&entity=podcastEpisode&limit=200" \
+            -o /tmp/itunes-raw.json
+
+          node -e "
+          const fs = require('fs');
+          const raw = JSON.parse(fs.readFileSync('/tmp/itunes-raw.json', 'utf8'));
+          
+          const episodes = raw.results
+            .filter(r => r.wrapperType === 'podcastEpisode')
+            .sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate))
+            .map((ep, i) => {
+              const ms = ep.trackTimeMillis || 0;
+              const totalMin = Math.round(ms / 60000);
+              const hours = Math.floor(totalMin / 60);
+              const mins = totalMin % 60;
+              const duration = hours > 0 ? hours + 'h ' + mins + 'min' : mins + ' min';
+              
+              const date = new Date(ep.releaseDate);
+              const dd = String(date.getDate()).padStart(2, '0');
+              const mm = String(date.getMonth() + 1).padStart(2, '0');
+              const yyyy = date.getFullYear();
+              
+              // Clean description: remove social media links at the end
+              let desc = (ep.description || '').replace(/\\\\n/g, ' ').replace(/\s+/g, ' ').trim();
+              desc = desc.replace(/\s*Bängeri TikTok:.*$/i, '');
+              desc = desc.replace(/\s*Muista myös tilata kanava.*$/i, '');
+              
+              return {
+                id: ep.trackId,
+                title: ep.trackName,
+                date: dd + '.' + mm + '.' + yyyy,
+                duration: duration,
+                description: desc,
+                appleUrl: ep.trackViewUrl.replace('&uo=4', ''),
+              };
+            });
+
+          fs.writeFileSync('public/episodes.json', JSON.stringify(episodes, null, 2));
+          console.log('Wrote ' + episodes.length + ' episodes');
+          "
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/episodes.json
+          git diff --cached --quiet || git commit -m "chore: update episodes from iTunes API"
+          git push
