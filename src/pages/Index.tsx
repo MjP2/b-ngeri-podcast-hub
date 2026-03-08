@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import heroImage from "@/assets/bangeri-hero.webp";
 import { loadContent, PodcastContent } from "@/lib/cms";
 import { Episode } from "@/lib/episodes";
