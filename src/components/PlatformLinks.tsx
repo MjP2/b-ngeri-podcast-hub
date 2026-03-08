@@ -1,9 +1,16 @@
-import { LINKS } from "@/lib/episodes";
+interface PlatformLinksProps {
+  links: {
+    youtube: string;
+    spotify: string;
+    apple: string;
+    pocketcasts: string;
+  };
+}
 
 const platforms = [
   {
+    key: "youtube" as const,
     name: "YouTube",
-    url: LINKS.youtube,
     icon: (
       <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
         <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
@@ -11,8 +18,8 @@ const platforms = [
     ),
   },
   {
+    key: "spotify" as const,
     name: "Spotify",
-    url: LINKS.spotify,
     icon: (
       <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
         <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z" />
@@ -20,8 +27,8 @@ const platforms = [
     ),
   },
   {
+    key: "apple" as const,
     name: "Apple Podcasts",
-    url: LINKS.apple,
     icon: (
       <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
         <path d="M5.34 0A5.328 5.328 0 000 5.34v13.32A5.328 5.328 0 005.34 24h13.32A5.328 5.328 0 0024 18.66V5.34A5.328 5.328 0 0018.66 0zm6.525 2.568c2.336 0 4.448.902 6.056 2.587 1.224 1.272 1.912 2.619 2.264 4.392.12.6-.12 1.2-.72 1.32s-1.2-.12-1.32-.72c-.264-1.344-.804-2.4-1.74-3.408-1.32-1.38-2.952-2.076-4.92-2.076-1.896 0-3.624.744-4.896 2.076-.936 1.008-1.476 2.064-1.74 3.408-.12.6-.72.84-1.32.72-.6-.12-.84-.72-.72-1.32.348-1.776 1.044-3.12 2.268-4.392 1.608-1.692 3.528-2.592 5.788-2.587zm.024 4.344c1.488 0 2.832.576 3.888 1.632.792.792 1.296 1.776 1.476 2.856.072.48-.24.924-.72.996-.48.072-.924-.24-.996-.72-.12-.72-.468-1.404-1.008-1.944-.72-.72-1.632-1.08-2.64-1.08s-1.92.36-2.64 1.08c-.54.54-.888 1.224-1.008 1.944-.072.48-.516.792-.996.72-.48-.072-.792-.516-.72-.996.18-1.08.684-2.064 1.476-2.856 1.056-1.056 2.4-1.632 3.888-1.632zM11.7 11.64a2.387 2.387 0 012.388 2.388 2.387 2.387 0 01-1.14 2.04l.624 4.752c.072.6-.36 1.14-.96 1.212h-1.824c-.6-.072-1.032-.612-.96-1.212l.624-4.752a2.387 2.387 0 01-1.14-2.04 2.387 2.387 0 012.388-2.388z" />
@@ -29,8 +36,8 @@ const platforms = [
     ),
   },
   {
+    key: "pocketcasts" as const,
     name: "Pocket Casts",
-    url: LINKS.pocketcasts,
     icon: (
       <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
         <path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm0 3.6c4.638 0 8.4 3.762 8.4 8.4 0 4.638-3.762 8.4-8.4 8.4-4.638 0-8.4-3.762-8.4-8.4 0-4.638 3.762-8.4 8.4-8.4zm0 2.4a6 6 0 100 12 6 6 0 000-12zm0 2.4a3.6 3.6 0 110 7.2 3.6 3.6 0 010-7.2z" />
@@ -39,21 +46,25 @@ const platforms = [
   },
 ];
 
-const PlatformLinks = () => {
+const PlatformLinks = ({ links }: PlatformLinksProps) => {
   return (
     <div className="flex flex-wrap items-center gap-3">
-      {platforms.map((p) => (
-        <a
-          key={p.name}
-          href={p.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 rounded-lg bg-secondary px-4 py-2.5 text-sm font-medium text-secondary-foreground transition-all hover:bg-primary hover:text-primary-foreground"
-        >
-          {p.icon}
-          <span>{p.name}</span>
-        </a>
-      ))}
+      {platforms.map((p) => {
+        const url = links[p.key];
+        if (!url) return null;
+        return (
+          <a
+            key={p.name}
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 rounded-lg bg-secondary px-4 py-2.5 text-sm font-medium text-secondary-foreground transition-all hover:bg-primary hover:text-primary-foreground"
+          >
+            {p.icon}
+            <span>{p.name}</span>
+          </a>
+        );
+      })}
     </div>
   );
 };

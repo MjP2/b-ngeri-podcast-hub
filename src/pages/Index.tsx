@@ -1,9 +1,12 @@
 import heroImage from "@/assets/bangeri-hero.jpg";
-import { episodes } from "@/lib/episodes";
+import { loadContent } from "@/lib/cms";
 import EpisodeCard from "@/components/EpisodeCard";
 import PlatformLinks from "@/components/PlatformLinks";
 
 const Index = () => {
+  const content = loadContent();
+  const { hero, episodes, links, footer } = content;
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Full-width Hero Image */}
@@ -19,23 +22,19 @@ const Index = () => {
       {/* Info section */}
       <section className="container mx-auto -mt-16 relative z-10 px-4 pb-12">
         <span className="mb-2 inline-block rounded-full bg-primary/15 px-3 py-1 font-display text-xs font-semibold uppercase tracking-widest text-primary">
-          Podcast
+          {hero.subtitle}
         </span>
         <h1 className="font-display text-4xl font-black tracking-tight text-foreground md:text-5xl lg:text-6xl">
-          Bängeri
+          {hero.title}
         </h1>
         <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
-          Ajankohtaispodcast, jonka keskustelijoina toimivat{" "}
-          <span className="text-foreground font-medium">Elias Aalto</span> ja{" "}
-          <span className="text-foreground font-medium">Matias Pietilä</span>.
-          IT-alan ammattilaisia ja yrittäjiä — tuttuja mm. Leijonan Luolasta,
-          Woltista ja Amazing Racesta.
+          {hero.description}
         </p>
         <div className="mt-6">
           <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Kuuntele missä tahansa
           </p>
-          <PlatformLinks />
+          <PlatformLinks links={links} />
         </div>
       </section>
 
@@ -54,11 +53,17 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t border-border py-8">
         <div className="container mx-auto flex flex-col items-center gap-4 px-4 text-sm text-muted-foreground sm:flex-row sm:justify-between">
-          <p>© Aalto Digital Oy</p>
+          <p>{footer.copyright}</p>
           <div className="flex items-center gap-4">
-            <a href="https://www.instagram.com/bangeripodcast" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-primary">Instagram</a>
-            <a href="https://www.tiktok.com/@bangeri.podcast" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-primary">TikTok</a>
-            <a href="https://www.youtube.com/@B%C3%A4ngeriPodcast" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-primary">YouTube</a>
+            {links.instagram && (
+              <a href={links.instagram} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-primary">Instagram</a>
+            )}
+            {links.tiktok && (
+              <a href={links.tiktok} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-primary">TikTok</a>
+            )}
+            {links.youtube && (
+              <a href={links.youtube} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-primary">YouTube</a>
+            )}
           </div>
         </div>
       </footer>
