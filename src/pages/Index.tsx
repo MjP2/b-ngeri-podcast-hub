@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import FormFlowEmbed from "@/components/FormFlowEmbed";
 import heroImage from "@/assets/bangeri-hero.webp";
 import { loadContent, PodcastContent } from "@/lib/cms";
 import { Episode } from "@/lib/episodes";
@@ -84,7 +85,7 @@ const Index = () => {
     });
   }, []);
 
-  const { hero, links, footer, sponsors } = content;
+  const { hero, links, footer, sponsors, formflowId } = content;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -118,6 +119,13 @@ const Index = () => {
           <PlatformLinks links={links} />
         </div>
       </section>
+
+      {/* Feedback Form */}
+      {formflowId && (
+        <section className="container mx-auto px-4 pb-8">
+          <FormFlowEmbed formId={formflowId} />
+        </section>
+      )}
 
       {/* Episodes */}
       <section className="container mx-auto px-4 py-12 md:py-16">
