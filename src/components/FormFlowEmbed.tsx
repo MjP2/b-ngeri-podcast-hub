@@ -42,7 +42,7 @@ const FormFlowEmbed = ({ formId }: FormFlowEmbedProps) => {
   return (
     <>
       <button
-        onClick={() => setOpen(true)}
+        onClick={handleOpen}
         className="group flex items-center gap-2 rounded-xl border border-border bg-card px-5 py-4 text-left transition-all duration-200 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 hover-scale"
       >
         <MessageSquare className="h-4 w-4 text-primary" />
