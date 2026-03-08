@@ -94,7 +94,7 @@ const FormFlowEmbed = ({ formId }: FormFlowEmbedProps) => {
           {/* Form content with fade-in */}
           <div className="p-5 max-h-[70vh] overflow-y-auto">
             <div
-              className={`transition-opacity duration-300 ${formReady ? "opacity-100" : "opacity-0"}`}
+              className={`transition-all duration-300 ${formReady ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2.5"}`}
             >
               <div key={formKey} id="formflow-embed" data-form-id={formId} />
             </div>
