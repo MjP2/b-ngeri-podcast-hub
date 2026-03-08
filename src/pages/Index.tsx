@@ -84,7 +84,7 @@ const Index = () => {
     });
   }, []);
 
-  const { hero, links, footer, sponsors } = content;
+  const { hero, links, footer, sponsors, formflowId } = content;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
