@@ -24,7 +24,15 @@ function getYoutubeEmbedUrl(url: string): string | null {
 
 const EpisodeCard = ({ episode, index }: EpisodeCardProps) => {
   const [expanded, setExpanded] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [contentHeight, setContentHeight] = useState(0);
   const embedUrl = episode.youtubeUrl ? getYoutubeEmbedUrl(episode.youtubeUrl) : null;
+
+  useEffect(() => {
+    if (contentRef.current) {
+      setContentHeight(contentRef.current.scrollHeight);
+    }
+  }, [expanded, episode]);
 
   return (
     <button
