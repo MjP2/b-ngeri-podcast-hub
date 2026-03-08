@@ -43,7 +43,7 @@ export const episodes: Episode[] = [
     appleUrl: "https://podcasts.apple.com/us/podcast/miten-wolt-sai-alkunsa-pt-2/id1774063928?i=1000727358893",
   },
   {
-    id: 5,
+    id: 1000726515954,
     title: "Miten Wolt sai alkunsa?",
     date: "12.09.2025",
     duration: "1h 11min",
