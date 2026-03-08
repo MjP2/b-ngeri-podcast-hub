@@ -469,22 +469,36 @@ export default function Admin() {
 
         {/* Settings */}
         {activeTab === "settings" && (
-          <div className="space-y-4 rounded-xl border border-border bg-card p-5">
-            <h2 className="font-display text-lg font-semibold">GitHub-asetukset</h2>
-            <p className="text-sm text-muted-foreground">
-              Syötä GitHub-tiedot, jotta Julkaise-nappi voi käynnistää sivuston päivityksen.
-              Tarvitset Personal Access Tokenin (PAT) jolla on <code>repo</code>-oikeus.
-            </p>
-            <FieldInput label="Omistaja (owner)" value={ghOwner} onChange={setGhOwner} placeholder="esim. käyttäjänimi" />
-            <FieldInput label="Repo" value={ghRepo} onChange={setGhRepo} placeholder="esim. bangeri-podcast" />
-            <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">GitHub Token (PAT)</Label>
-              <Input
-                type="password"
-                value={ghToken}
-                onChange={(e) => setGhToken(e.target.value)}
-                placeholder="ghp_..."
+          <div className="space-y-6">
+            <div className="space-y-4 rounded-xl border border-border bg-card p-5">
+              <h2 className="font-display text-lg font-semibold">Palautelomake (FormFlow)</h2>
+              <FieldInput
+                label="FormFlow Form ID"
+                value={content.formflowId || ""}
+                onChange={(v) => setContent(prev => ({ ...prev, formflowId: v }))}
+                placeholder="864bf112-1acc-42ed-b5d9-26ab7ef0a34b"
               />
+              <p className="text-xs text-muted-foreground">
+                Jätä tyhjäksi piilottaaksesi palautelomakkeen. Löydät Form ID:n FormFlow-hallintapaneelista.
+              </p>
+            </div>
+            <div className="space-y-4 rounded-xl border border-border bg-card p-5">
+              <h2 className="font-display text-lg font-semibold">GitHub-asetukset</h2>
+              <p className="text-sm text-muted-foreground">
+                Syötä GitHub-tiedot, jotta Julkaise-nappi voi käynnistää sivuston päivityksen.
+                Tarvitset Personal Access Tokenin (PAT) jolla on <code>repo</code>-oikeus.
+              </p>
+              <FieldInput label="Omistaja (owner)" value={ghOwner} onChange={setGhOwner} placeholder="esim. käyttäjänimi" />
+              <FieldInput label="Repo" value={ghRepo} onChange={setGhRepo} placeholder="esim. bangeri-podcast" />
+              <div className="space-y-1.5">
+                <Label className="text-xs text-muted-foreground">GitHub Token (PAT)</Label>
+                <Input
+                  type="password"
+                  value={ghToken}
+                  onChange={(e) => setGhToken(e.target.value)}
+                  placeholder="ghp_..."
+                />
+              </div>
             </div>
           </div>
         )}
