@@ -51,7 +51,7 @@ export const episodes: Episode[] = [
     appleUrl: "https://podcasts.apple.com/us/podcast/miten-wolt-sai-alkunsa/id1774063928?i=1000726515954",
   },
   {
-    id: 6,
+    id: 1000724997297,
     title: "Näin teet varmaa passiivista tuloa!",
     date: "04.09.2025",
     duration: "45 min",
