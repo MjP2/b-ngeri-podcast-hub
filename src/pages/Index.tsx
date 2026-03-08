@@ -1,31 +1,35 @@
 import { useState, useEffect } from "react";
 import heroImage from "@/assets/bangeri-hero.jpg";
-import { loadContent } from "@/lib/cms";
+import { loadContent, PodcastContent } from "@/lib/cms";
 import { Episode } from "@/lib/episodes";
 import EpisodeCard from "@/components/EpisodeCard";
 import PlatformLinks from "@/components/PlatformLinks";
 
 const Index = () => {
-  const content = loadContent();
-  const { hero, links, footer, sponsors } = content;
-  const [episodes, setEpisodes] = useState<Episode[]>(content.episodes);
+  const localContent = loadContent();
+  const [content, setContent] = useState<PodcastContent>(localContent);
+  const [episodes, setEpisodes] = useState<Episode[]>(localContent.episodes);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${import.meta.env.BASE_URL}episodes.json`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Not found");
-        return res.json();
-      })
-      .then((data: Episode[]) => {
-        setEpisodes(data);
-        setLoading(false);
-      })
-      .catch(() => {
-        // Fall back to CMS/hardcoded episodes
-        setLoading(false);
-      });
+    const base = import.meta.env.BASE_URL;
+
+    // Fetch both content.json and episodes.json in parallel
+    Promise.allSettled([
+      fetch(`${base}content.json`).then(r => r.ok ? r.json() : null),
+      fetch(`${base}episodes.json`).then(r => r.ok ? r.json() : null),
+    ]).then(([contentResult, episodesResult]) => {
+      if (contentResult.status === "fulfilled" && contentResult.value) {
+        setContent(prev => ({ ...prev, ...contentResult.value }));
+      }
+      if (episodesResult.status === "fulfilled" && episodesResult.value) {
+        setEpisodes(episodesResult.value);
+      }
+      setLoading(false);
+    });
   }, []);
+
+  const { hero, links, footer, sponsors } = content;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
