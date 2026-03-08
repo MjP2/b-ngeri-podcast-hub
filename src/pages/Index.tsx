@@ -69,9 +69,8 @@ const Index = () => {
           const existing = mergedById.get(id);
           if (existing) {
             mergedById.set(id, { ...existing, ...localEp });
-          } else {
-            mergedById.set(id, localEp);
           }
+          // Don't add localStorage-only episodes — they're stale duplicates
         }
       }
 
