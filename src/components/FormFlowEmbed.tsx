@@ -78,7 +78,7 @@ const FormFlowEmbed = ({ formId }: FormFlowEmbedProps) => {
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-border px-4 sm:px-5 py-4">
+          <div className="flex items-center justify-between border-b border-border px-6 py-4">
             <span className="flex items-center gap-2 font-display text-sm font-semibold text-foreground">
               <MessageSquare className="h-4 w-4 text-primary" />
               Lähetä palautetta
@@ -92,7 +92,7 @@ const FormFlowEmbed = ({ formId }: FormFlowEmbedProps) => {
           </div>
 
           {/* Form content with fade-in */}
-          <div className="px-2 py-4 sm:p-5 max-h-[70vh] overflow-y-auto">
+          <div className="p-6 max-h-[70vh] overflow-y-auto">
             <div
               className={`transition-all duration-300 ${formReady ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2.5"}`}
             >
