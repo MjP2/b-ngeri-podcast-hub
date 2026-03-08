@@ -11,7 +11,7 @@ export interface Episode {
 
 export const episodes: Episode[] = [
   {
-    id: 1,
+    id: 1000730990609,
     title: "Miksi koulukiusaamista ei saada loppumaan?",
     date: "09.10.2025",
     duration: "1h 14min",
@@ -19,7 +19,7 @@ export const episodes: Episode[] = [
     appleUrl: "https://podcasts.apple.com/us/podcast/miksi-koulukiusaamista-ei-saada-loppumaan/id1774063928?i=1000730990609",
   },
   {
-    id: 2,
+    id: 1000729719846,
     title: "Kuka on oikeasti maailman rikkain ihminen?",
     date: "02.10.2025",
     duration: "56 min",
@@ -27,7 +27,7 @@ export const episodes: Episode[] = [
     appleUrl: "https://podcasts.apple.com/us/podcast/kuka-on-oikeasti-maailman-rikkain-ihminen/id1774063928?i=1000729719846",
   },
   {
-    id: 3,
+    id: 1000728409532,
     title: "USA:n sensuuri, Palestiina ja Gaza, yksinäisyys ja tekoäly",
     date: "25.09.2025",
     duration: "1h 1min",
@@ -35,7 +35,7 @@ export const episodes: Episode[] = [
     appleUrl: "https://podcasts.apple.com/us/podcast/usa-n-sensuuri-palestiina-ja-gaza-yksin%C3%A4isyys-ja-teko%C3%A4ly/id1774063928?i=1000728409532",
   },
   {
-    id: 4,
+    id: 1000727358893,
     title: "Miten Wolt sai alkunsa? Pt. 2",
     date: "18.09.2025",
     duration: "1h 48min",
@@ -43,7 +43,7 @@ export const episodes: Episode[] = [
     appleUrl: "https://podcasts.apple.com/us/podcast/miten-wolt-sai-alkunsa-pt-2/id1774063928?i=1000727358893",
   },
   {
-    id: 5,
+    id: 1000726515954,
     title: "Miten Wolt sai alkunsa?",
     date: "12.09.2025",
     duration: "1h 11min",
@@ -51,7 +51,7 @@ export const episodes: Episode[] = [
     appleUrl: "https://podcasts.apple.com/us/podcast/miten-wolt-sai-alkunsa/id1774063928?i=1000726515954",
   },
   {
-    id: 6,
+    id: 1000724997297,
     title: "Näin teet varmaa passiivista tuloa!",
     date: "04.09.2025",
     duration: "45 min",
@@ -59,7 +59,7 @@ export const episodes: Episode[] = [
     appleUrl: "https://podcasts.apple.com/us/podcast/n%C3%A4in-teet-varmaa-passiivista-tuloa/id1774063928?i=1000724997297",
   },
   {
-    id: 7,
+    id: 1000723891288,
     title: "Elias Aalto opiaattikoukussa!",
     date: "28.08.2025",
     duration: "57 min",
@@ -67,7 +67,7 @@ export const episodes: Episode[] = [
     appleUrl: "https://podcasts.apple.com/us/podcast/elias-aalto-opiaattikoukussa/id1774063928?i=1000723891288",
   },
   {
-    id: 8,
+    id: 1000722962321,
     title: "ULTIMAATTINEN asuntomessujen trollaus",
     date: "21.08.2025",
     duration: "1h 3min",
