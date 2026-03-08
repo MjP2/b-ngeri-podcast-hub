@@ -98,11 +98,6 @@ const FormFlowEmbed = ({ formId }: FormFlowEmbedProps) => {
             >
               <div key={formKey} id="formflow-embed" data-form-id={formId} />
             </div>
-            {!formReady && (
-              <div className="flex items-center justify-center py-8">
-                <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-              </div>
-            )}
           </div>
         </div>
       </div>
