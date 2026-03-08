@@ -36,7 +36,7 @@ const Index = () => {
       {/* Full-width Hero Image */}
       <div className="relative w-full">
         <img
-          src={heroImage}
+          src={hero.imageUrl || heroImage}
           alt="Bängeri Podcast"
           className="w-full object-cover"
         />

@@ -289,6 +289,12 @@ export default function Admin() {
             <FieldInput label="Otsikko" value={content.hero.title} onChange={(v) => updateHero("title", v)} />
             <FieldInput label="Alaotsikko" value={content.hero.subtitle} onChange={(v) => updateHero("subtitle", v)} />
             <FieldTextarea label="Kuvaus" value={content.hero.description} onChange={(v) => updateHero("description", v)} />
+            <FieldInput label="Hero-kuvan URL" value={content.hero.imageUrl || ""} onChange={(v) => updateHero("imageUrl", v)} placeholder="https://..." />
+            {content.hero.imageUrl && (
+              <div className="rounded-lg bg-secondary/50 p-3 flex items-center justify-center">
+                <img src={content.hero.imageUrl} alt="Hero-esikatselu" className="max-h-32 object-contain rounded" />
+              </div>
+            )}
           </div>
         )}
 

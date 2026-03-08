@@ -11,6 +11,7 @@ export interface PodcastContent {
     title: string;
     subtitle: string;
     description: string;
+    imageUrl: string;
   };
   episodes: Episode[];
   links: {
@@ -36,6 +37,7 @@ export function defaultContent(): PodcastContent {
       subtitle: "Podcast",
       description:
         "Ajankohtaispodcast, jonka keskustelijoina toimivat Elias Aalto ja Matias Pietilä. IT-alan ammattilaisia ja yrittäjiä — tuttuja mm. Leijonan Luolasta, Woltista ja Amazing Racesta.",
+      imageUrl: "",
     },
     episodes: defaultEpisodes,
     links: { ...defaultLinks },
