@@ -19,7 +19,6 @@ const FormFlowEmbed = ({ formId }: FormFlowEmbedProps) => {
     if (!open) return;
 
     const timer = setTimeout(() => {
-      // Remove previous FormFlow scripts to force fresh init
       document.querySelectorAll('script[src*="myformflow.io"]').forEach((s) => s.remove());
 
       const script = document.createElement("script");
@@ -28,7 +27,27 @@ const FormFlowEmbed = ({ formId }: FormFlowEmbedProps) => {
       document.body.appendChild(script);
     }, 50);
 
-    return () => clearTimeout(timer);
+    // Watch for thank-you page and auto-close after 1s
+    const container = document.getElementById("formflow-embed");
+    let closeTimer: ReturnType<typeof setTimeout>;
+    const observer = new MutationObserver(() => {
+      if (!container) return;
+      // Detect thank-you state: look for common patterns (text content change, form disappearing)
+      const html = container.innerHTML.toLowerCase();
+      if (html.includes("thank") || html.includes("kiitos") || html.includes("submitted")) {
+        closeTimer = setTimeout(() => setOpen(false), 1000);
+      }
+    });
+
+    if (container) {
+      observer.observe(container, { childList: true, subtree: true, characterData: true });
+    }
+
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(closeTimer);
+      observer.disconnect();
+    };
   }, [open, formKey]);
 
   // Lock body scroll when modal is open
