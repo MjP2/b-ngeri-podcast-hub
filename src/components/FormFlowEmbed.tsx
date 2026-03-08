@@ -84,7 +84,7 @@ const FormFlowEmbed = ({ formId }: FormFlowEmbedProps) => {
 
           {/* Form content */}
           <div className="p-5 max-h-[70vh] overflow-y-auto">
-            <div id="formflow-embed" data-form-id={formId} />
+            <div key={formKey} id="formflow-embed" data-form-id={formId} />
           </div>
         </div>
       </div>
