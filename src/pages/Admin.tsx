@@ -267,6 +267,37 @@ export default function Admin() {
           </div>
         )}
 
+        {/* Sponsors editor */}
+        {activeTab === "sponsors" && (
+          <div className="space-y-3">
+            <Button onClick={addSponsor} className="gap-2 w-full">
+              <Plus size={16} /> Lisää sponsori
+            </Button>
+            {content.sponsors.map((sponsor, i) => (
+              <div key={sponsor.id} className="rounded-xl border border-border bg-card p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-display text-sm font-bold text-primary">Sponsori #{i + 1}</span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 text-destructive hover:text-destructive"
+                    onClick={() => removeSponsor(sponsor.id)}
+                  >
+                    <Trash2 size={14} />
+                  </Button>
+                </div>
+                <FieldInput label="Logo URL (kuva)" value={sponsor.imageUrl} onChange={(v) => updateSponsor(sponsor.id, "imageUrl", v)} placeholder="https://..." />
+                <FieldInput label="Linkki URL" value={sponsor.linkUrl} onChange={(v) => updateSponsor(sponsor.id, "linkUrl", v)} placeholder="https://..." />
+                {sponsor.imageUrl && (
+                  <div className="rounded-lg bg-secondary/50 p-3 flex items-center justify-center">
+                    <img src={sponsor.imageUrl} alt={`Sponsori ${i + 1}`} className="max-h-12 object-contain" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Footer editor */}
         {activeTab === "footer" && (
           <div className="space-y-4 rounded-xl border border-border bg-card p-5">

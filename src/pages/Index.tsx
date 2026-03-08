@@ -5,7 +5,7 @@ import PlatformLinks from "@/components/PlatformLinks";
 
 const Index = () => {
   const content = loadContent();
-  const { hero, episodes, links, footer } = content;
+  const { hero, episodes, links, footer, sponsors } = content;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
