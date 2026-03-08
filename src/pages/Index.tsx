@@ -59,14 +59,18 @@ const Index = () => {
       }
 
       // Also overlay localStorage admin edits (poems etc.)
-      const localEpisodes = localContent.episodes;
-      const localMap = new Map(localEpisodes.map((e: Episode) => [e.id, e]));
-      for (const [id, localEp] of localMap) {
-        const existing = mergedById.get(id);
-        if (existing) {
-          mergedById.set(id, { ...existing, ...localEp });
-        } else {
-          mergedById.set(id, localEp);
+      // Only apply if user has actually saved something in localStorage
+      const hasLocalOverrides = !!localStorage.getItem("bangeri-cms");
+      if (hasLocalOverrides) {
+        const localEpisodes = localContent.episodes;
+        const localMap = new Map(localEpisodes.map((e: Episode) => [e.id, e]));
+        for (const [id, localEp] of localMap) {
+          const existing = mergedById.get(id);
+          if (existing) {
+            mergedById.set(id, { ...existing, ...localEp });
+          } else {
+            mergedById.set(id, localEp);
+          }
         }
       }
 
